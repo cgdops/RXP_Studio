@@ -1,0 +1,26 @@
+## Interface: 16001, 11509, 20505, 40402, 110100
+## Interface-Classic: 11509
+## Interface-BCC: 20505
+## Interface-Cata: 40402
+## Interface-Mainline: 110100
+## Title: |cff3B82F6RXP|r Guide Studio |cffF59E0B[Visual Recorder & Editor]|r
+## Notes: In-game visual speed-leveling guide recorder, card editor, route validator, and live RXPGuides bridge.
+## Author: Chris & Antigravity
+## Version: 1.0.0
+## Category: Quests
+## IconTexture: Interface\AddOns\RXP_Studio\RXP_Studio_Icon
+## SavedVariables: RXP_StudioDB, RXP_RecorderDB
+## OptionalDeps: RXPGuides
+
+Core\DataModel.lua
+Compiler\RXPCompiler.lua
+Compiler\RouteLinter.lua
+Bridge\RXPBridge.lua
+Recorder\AutoMerger.lua
+Recorder\EventCapture.lua
+UI\Theme.lua
+UI\LiveHUD.lua
+UI\CardInspector.lua
+UI\MapPreview.lua
+UI\StudioFrame.lua
+RXP_Studio.lua

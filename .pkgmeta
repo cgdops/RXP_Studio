@@ -1,0 +1,9 @@
+package-as: RXP_Studio
+
+ignore:
+  - README.md
+  - CHANGELOG.md
+  - LICENSE.txt
+  - icon.png
+  - RXP_Studio_Icon.png
+  - tests
