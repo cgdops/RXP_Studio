@@ -430,6 +430,7 @@ function StudioFrame:Init()
         f:Hide()
     end)
     closeWinBtn:SetPoint("TOPRIGHT", topBar, "TOPRIGHT", -6, -6)
+    self.closeWinBtn = closeWinBtn
 
     -- Route Health Pill + [Auto-Fix All]
     local autoFixHeaderBtn = Theme:CreateTextButton(topBar, "[Auto-Fix All]", 86, 22, "gold", function()

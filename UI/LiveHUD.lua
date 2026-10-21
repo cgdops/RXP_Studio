@@ -144,7 +144,7 @@ function LiveHUD:Init()
     end
     f.hudIcon = hudIcon
 
-    local statusPill = Theme:CreateTextButton(headerBar, "|cffEF4444[REC]|r Guide", 168, 20, "subtle", function()
+    local statusPill = Theme:CreateTextButton(headerBar, "|cffEF4444[REC]|r Guide", 142, 20, "subtle", function()
         self:ToggleRecording()
     end)
     statusPill:SetPoint("LEFT", hudIcon, "RIGHT", 4, 0)
@@ -154,15 +154,30 @@ function LiveHUD:Init()
     statusPill.label:SetJustifyH("LEFT")
     f.statusPill = statusPill
 
-    local openStudioBtn = Theme:CreateTextButton(headerBar, "[Open Studio]", 86, 20, "primary", function()
+    local closeHudBtn = Theme:CreateTextButton(headerBar, "[X]", 24, 20, "danger", function()
+        f:Hide()
+        if RXP_StudioDB and RXP_StudioDB.settings then
+            RXP_StudioDB.settings.showHUD = false
+        end
+        if ns.Recorder and type(ns.Recorder.SetRecording) == "function" and self:IsRecorderActive() then
+            ns.Recorder:SetRecording(false)
+        end
+        if ns.Print then
+            ns:Print("Closed Live Recorder HUD. Type |cffF59E0B/rxprec|r to reopen or |cffF59E0B/rxpstudio|r to open the Guide Studio.")
+        end
+    end)
+    closeHudBtn:SetPoint("RIGHT", headerBar, "RIGHT", -4, 0)
+    f.closeHudBtn = closeHudBtn
+
+    local openStudioBtn = Theme:CreateTextButton(headerBar, "[Open Studio]", 82, 20, "primary", function()
         if ns.UI and ns.UI.ToggleStudio then
             ns.UI:ToggleStudio()
         end
     end)
-    openStudioBtn:SetPoint("RIGHT", headerBar, "RIGHT", -4, 0)
+    openStudioBtn:SetPoint("RIGHT", closeHudBtn, "LEFT", -4, 0)
     f.openStudioBtn = openStudioBtn
 
-    local pauseBtn = Theme:CreateTextButton(headerBar, "[Pause]", 62, 20, "gold", function()
+    local pauseBtn = Theme:CreateTextButton(headerBar, "[Pause]", 58, 20, "gold", function()
         self:ToggleRecording()
     end)
     pauseBtn:SetPoint("RIGHT", openStudioBtn, "LEFT", -4, 0)

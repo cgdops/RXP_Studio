@@ -2,6 +2,10 @@
 
 ## [1.0.1] - 2026-10-20
 
+### Added
+- **Live Recorder HUD Close Button (`[X]`)**:
+  - Added a top-right `[X]` close button on the Live Recorder HUD window (`RXPStudioLiveHUD`) so players who aren't actively recording or writing a guide can dismiss the HUD (and automatically pause background event capture) with a single click.
+
 ### Fixed
 - **Live RXPGuides Objective Progress Tracking (`.complete`)**:
   - Fixed a bug in `RXPCompiler.lua` where `.complete` lines were compiled with a literal `>>7/7 Objective` display override (`element.rawtext`), which caused `RXPGuides` to display static completed counts (`7/7`, `10/10`) instead of live quest log progress (`0/7`, `1/7`, etc.).
