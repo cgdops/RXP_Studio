@@ -170,15 +170,33 @@ local function preRegisterGuideZonesAndObjectives(rxpAddon, guide)
             if act.type == "complete" and tonumber(act.questId) then
                 local qid = tonumber(act.questId)
                 local objIdx = tonumber(act.objIndex) or 1
-                local objText = act.objText or act.text or ("Quest #" .. tostring(qid) .. " Objective " .. tostring(objIdx))
-                local objMax = tonumber(act.objMax) or tonumber(tostring(objText):match("^%d+/(%d+)")) or 1
+                local rawObjText = act.objText or act.text or ("Quest #" .. tostring(qid) .. " Objective " .. tostring(objIdx))
+                local objMax = tonumber(act.objMax)
+                    or tonumber(tostring(rawObjText):match("^%s*%d+%s*/%s*(%d+)"))
+                    or tonumber(tostring(rawObjText):match(":%s*%d+%s*/%s*(%d+)%s*$"))
+                    or 1
+
+                -- Normalize cached preview text to "0/N Objective" (or "Objective: 0/N") so
+                -- unaccepted quests never display a baked-in "7/7" or "10/10" completion count
+                local cleanObjDesc = tostring(rawObjText)
+                    :gsub("^%s*%d+%s*/%s*%d+%s*", "")
+                    :gsub("%s*:%s*%d+%s*/%s*%d+%s*$", "")
+                cleanObjDesc = cleanObjDesc:match("^%s*(.-)%s*$") or ""
+                local previewText
+                if cleanObjDesc ~= "" then
+                    previewText = string.format("%s: 0/%d", cleanObjDesc, objMax)
+                else
+                    previewText = rawObjText
+                end
+
                 if type(objCache[qid]) ~= "table" then
                     objCache[qid] = {}
                     objCache[0] = (tonumber(objCache[0]) or 0) + 1
                 end
-                if not objCache[qid][objIdx] then
+                local existingObj = objCache[qid][objIdx]
+                if not existingObj or (type(existingObj.text) == "string" and existingObj.text:match("^%s*[1-9]%d*%s*/%s*%d+")) then
                     objCache[qid][objIdx] = {
-                        text         = objText,
+                        text         = previewText,
                         type         = "monster",
                         numRequired  = objMax,
                         numFulfilled = 0,
@@ -190,10 +208,11 @@ local function preRegisterGuideZonesAndObjectives(rxpAddon, guide)
     end
 end
 
-local function populateParsedStepTextFallbacks(parsedGuide)
+local function populateParsedStepTextFallbacks(parsedGuide, sourceGuide)
     if type(parsedGuide) ~= "table" or type(parsedGuide.steps) ~= "table" then
         return
     end
+    local objCache = _G.RXPCData and _G.RXPCData.questObjectivesCache
     for idx, step in ipairs(parsedGuide.steps) do
         step.elements = step.elements or {}
         local hasNonEmptyText = false
@@ -201,8 +220,12 @@ local function populateParsedStepTextFallbacks(parsedGuide)
             if type(el.text) == "string" and el.text:match("%S") then
                 hasNonEmptyText = true
             elseif el.tag == "complete" then
+                local qid = tonumber(el.questId)
+                local objIdx = tonumber(el.obj) or 1
+                local cachedEntry = qid and objCache and objCache[qid] and objCache[qid][objIdx]
                 local fallback = (type(el.rawtext) == "string" and el.rawtext:match("%S") and el.rawtext)
-                    or (el.questId and string.format("Complete Quest #%d (Objective %d)", tonumber(el.questId) or 0, tonumber(el.obj) or 1))
+                    or (cachedEntry and type(cachedEntry.text) == "string" and cachedEntry.text:match("%S") and cachedEntry.text)
+                    or (qid and string.format("Complete Quest #%d (Objective %d)", qid, objIdx))
                     or "Complete quest objective"
                 el.text = fallback
                 hasNonEmptyText = true

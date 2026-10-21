@@ -6,7 +6,7 @@
 ## Title: |cff3B82F6RXP|r Guide Studio |cffF59E0B[Visual Recorder & Editor]|r
 ## Notes: In-game visual speed-leveling guide recorder, card editor, route validator, and live RXPGuides bridge.
 ## Author: Chris & Antigravity
-## Version: 1.0.0
+## Version: 1.0.1
 ## Category: Quests
 ## IconTexture: Interface\AddOns\RXP_Studio\RXP_Studio_Icon
 ## SavedVariables: RXP_StudioDB, RXP_RecorderDB

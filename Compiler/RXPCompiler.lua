@@ -166,7 +166,11 @@ function Compiler:ParseRawStep(stepString)
                         textPart = body:sub(dashIdx + 2):gsub("^ ?", ""):gsub("\r$", "")
                     elseif arrowIdx then
                         argsPart = trim(body:sub(1, arrowIdx - 1))
-                        textPart = trim(body:sub(arrowIdx + 2):gsub("%s*%-%-.*$", ""))
+                        if dashIdx and dashIdx > arrowIdx then
+                            textPart = body:sub(dashIdx + 2):gsub("^ ?", ""):gsub("\r$", "")
+                        else
+                            textPart = trim(body:sub(arrowIdx + 2))
+                        end
                     else
                         argsPart = trim(body)
                         textPart = ""
@@ -516,9 +520,12 @@ function Compiler:CompileStepCard(card)
             local qid = tonumber(action.questId) or 0
             local objIdx = tonumber(action.objIndex) or 1
             local objText = action.objText or action.text or ""
-            local safeArrowText = trim(objText):gsub("%%", "%%%%")
-            if safeArrowText ~= "" then
-                table.insert(lines, string.format("    .complete %d,%d >>%s --%s", qid, objIdx, safeArrowText, objText))
+            -- Do NOT emit >>literal text on .complete unless it uses %d/%d format specifiers;
+            -- otherwise RXPGuides's element.rawtext overrides live objective counters with a static string
+            -- (e.g. showing "7/7 Plainstrider Meat" or "10/10 Mountain Cougar Pelt" at 0/7 progress).
+            local customArrowText = action.customText and trim(action.customText) or nil
+            if customArrowText and customArrowText ~= "" then
+                table.insert(lines, string.format("    .complete %d,%d >>%s --%s", qid, objIdx, customArrowText, objText))
             else
                 table.insert(lines, string.format("    .complete %d,%d --%s", qid, objIdx, objText))
             end

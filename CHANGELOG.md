@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1] - 2026-10-20
+
+### Fixed
+- **Live RXPGuides Objective Progress Tracking (`.complete`)**:
+  - Fixed a bug in `RXPCompiler.lua` where `.complete` lines were compiled with a literal `>>7/7 Objective` display override (`element.rawtext`), which caused `RXPGuides` to display static completed counts (`7/7`, `10/10`) instead of live quest log progress (`0/7`, `1/7`, etc.).
+  - Updated `RXPCompiler.lua` to emit standard `.complete <questId>,<objIndex> --<objText>` syntax so `RXPGuides` dynamically reads and updates live `GetQuestLogLeaderBoard` counters as items are looted or mobs are slain.
+  - Updated `RXPBridge.lua` to normalize pre-registered `RXPCData.questObjectivesCache` entries to `0/<max>` (`numFulfilled = 0`, `finished = false`) so unaccepted or previewed quests never display baked-in completion numbers.
+
 ## [1.0.0] - 2026-10-20
 
 ### Added

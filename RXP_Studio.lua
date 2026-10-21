@@ -1,7 +1,7 @@
 local addonName, ns = ...
 _G.RXP_Studio = ns
 
-ns.version = "1.0.0"
+ns.version = "1.0.1"
 ns.Core = ns.Core or {}
 ns.Compiler = ns.Compiler or {}
 ns.Linter = ns.Linter or {}
